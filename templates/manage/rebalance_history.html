@@ -1,0 +1,54 @@
+{% extends 'index.html' %}
+{% load static %}
+
+{% block content %}
+<div class = "container-fluid">
+	<h3>
+        {% if is_all %}
+            Rebalance History (<a href = "{% url 'manage:rebalance_list' %}">Waitings</a>)
+        {% else %}
+            {{pair}} History (<a href = "{% url 'manage:rebalance_histories' %}">All History</a>)
+        {% endif %}
+    </h3>
+	<table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Record</th>
+                <th>From</th>
+                <th>To</th>
+                <th>Request Date</th>
+                <th>Finisth Date</th>
+                <th>Amount</th>
+                <th>Urgency</th>
+                <th>Period</th>
+            </tr>
+        </thead>
+        <tbody id = "table_body">
+            {% for reb in rebalances %}
+            <tr id = "tr_{{reb.id}}">
+                <td>{{reb.id}}</td>
+                <td>
+                    {% if reb.urgency.name == 'Urgent' %}
+                    .......
+                    {% else %}
+                        {% if reb.direct %} {{reb.pair.first_account}} {% else %} {{reb.pair.second_account}} {% endif %}
+                    {% endif %}
+                </td>
+                <td>{% if reb.direct %} {{reb.pair.second_account}} {% else %} {{reb.pair.first_account}} {% endif %}</td>
+                <td>{{reb.request_date}}</td>
+                <td>{{reb.finish_date}}</td>
+                <td>{{reb.amount}} {{reb.pair.first_account.currency}}</td>
+                <td>{{reb.urgency}}</td>
+                <td>{{reb.period}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+
+<script>
+{% block script %}
+    
+{% endblock %}
+</script>

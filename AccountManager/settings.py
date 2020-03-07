@@ -25,7 +25,7 @@ SECRET_KEY = 'k=nc2j9u0g4ryqtldyz4iwuom8cxlg4(lhq$p)4jz6y=i(6-h$'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '192.168.0.111']
 
 AUTH_USER_MODEL = 'Auths.MyUser'
 
@@ -38,9 +38,22 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'background_task',
+    'channels',
     'Auths',
     'Management',
 ]
+
+ASGI_APPLICATION = 'AccountManager.consumers.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [("redis://:guest@127.0.0.1:6379/0")],
+        },
+    },
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -102,6 +115,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+BACKGROUND_TASK_RUN_ASYNC = True
+MAX_RUN_TIME = 3000000
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/

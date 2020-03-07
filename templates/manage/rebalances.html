@@ -1,0 +1,105 @@
+{% extends 'index.html' %}
+{% load static %}
+
+{% block content %}
+<div class = "container-fluid">
+	<h3>Waiting Rebalance (<a href = "{% url 'manage:rebalance_histories' %}">History</a>)</h3>
+	<table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Record</th>
+                <th>Action</th>
+                <th>From</th>
+                <th>To</th>
+                <th>Request Date</th>
+                <th>Amount</th>
+                <th>Urgency</th>
+                <th>Period</th>
+            </tr>
+        </thead>
+        <tbody id = "table_body">
+            {% for reb in rebalances %}
+            <tr id = "tr_{{reb.id}}">
+                <td>{{reb.id}}</td>
+                <td id = "td_{{reb.id}}", style = "background-color: {% if reb.state == 'PR' %} cadetblue {% else %} {% endif %};">
+                    {% if perms.Management.can_add_rebalance and reb.state == 'RQ' %}
+                        <button id = "change_state" class = "btn btn-info" data = "{{reb.id}}">Accept</button>
+                    {% else %}
+                    <b>Processing</b>
+                    {% endif %}
+                </td>
+
+                <td>
+                    {% if reb.urgency.name == 'Urgent' %}
+                    .......
+                    {% else %}
+                        {% if reb.direct %} {{reb.pair.first_account}} {% else %} {{reb.pair.second_account}} {% endif %}
+                    {% endif %}
+                </td>
+                <td>{% if reb.direct %} {{reb.pair.second_account}} {% else %} {{reb.pair.first_account}} {% endif %}</td>
+                <td>{{reb.request_date}}</td>
+                <td>{{reb.amount}} {{reb.pair.first_account.currency}}</td>
+                <td>{{reb.urgency}}</td>
+                <td>{{reb.period}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+
+<script>
+{% block script %}
+    $("#change_state").on("click", function() {
+        var reb_id = $(this).attr("data");
+        var td = $("#td_" + reb_id);
+        td.css("background-color", "dodgerblue");
+        td.html("<b>Processing</b>");
+        $.post(
+			"{% url 'manage:rebalance_list' %}",
+			{reb_id: reb_id},
+			function(data) {
+                $("#log_panel").prepend("<p>Record " + reb_id + " stae is changed!!" + "</p>");
+			}
+        );
+    });
+
+    var rebalanceReportSocket = new WebSocket(
+        'ws://' + window.location.host +
+        '/ws/report/rebalance/');
+
+    rebalanceReportSocket.onmessage = function(e) {
+        var data = JSON.parse(e.data);
+        var message = data['message'];
+        var str_list = message.split(";");
+        if (str_list[0] == "RQ") {
+            var tr = $("<tr></tr>").attr("id", "tr_" + str_list[1]);
+            var td = $("<td></td>").text(str_list[1]);
+            tr.append(td);
+            var button = $("<button></button>").attr({
+                "id" : "change_state",
+                "class" : "btn btn-info",
+                "data" : str_list[1],
+            }).text("Accept");
+            td = $("<td></td>").attr("id", "td_" + str_list[1]);
+            td.append(button);
+            tr.append(td);
+            for (var i = 2; i <= 7; i++) {
+                tr.append($("<td></td>").text(str_list[i]));
+            }
+            $("#table_body").prepend(tr);
+        } else if (str_list[0] == "FS") {
+            $("#tr_" + str_list[1]).remove();
+        }
+        
+    };
+
+    rebalanceReportSocket.onopen=function (e) {
+        console.log("rebalance reports connection success");
+    };
+
+    rebalanceReportSocket.onclose = function(e) {
+        console.error('rebalance reports socket closed unexpectedly');
+    };
+{% endblock %}
+</script>

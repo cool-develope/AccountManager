@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block style %}
+
+
+{% endblock %}
+
+{% block body %}
+</head>
+<body style="font-family: Malgun Gothic;">
+<div class="container" style="font-family: PRK P Chongbong; font-size: 20px;">
+  <ul class="nav nav-tabs col-md-offset-2">
+    <li class="tablinks" id = 'clients'><a href="{% url 'manage:account_list' %}">Account</a></li>
+    <li class="tablinks" id = 'clients'><a href="{% url 'manage:rebalance_list' %}">Rebalance</a></li>
+    <a style="position: absolute;
+    right: 10px; padding:12px; font-size: 18px; margin: 5px " href="{% url 'auths:logout' %}">Logout</a>
+  </ul>
+</div>
+<div>
+  <div class = "col-md-3"><div class = "log-panel" id = "log_panel" style="height:880px;"></div></div>
+  <div id = "main-container" class = "col-md-9">
+    {% block content %}
+    {% endblock %}
+  </div>
+</div>
+{% endblock %}
+
+{% block domready %}
+
+{% endblock %}
+
+<script>
+{% block basescript %}
+
+    var logSocket = new WebSocket(
+        'ws://' + window.location.host +
+        '/ws/report/log/');
+
+    logSocket.onmessage = function(e) {
+        var data = JSON.parse(e.data);
+        var message = data['message'];
+        $("#log_panel").prepend("<p>" + message + "</p>");
+    };
+
+    logSocket.onopen=function (e) {
+      console.log("log connection success");
+    };
+
+    logSocket.onclose = function(e) {
+        console.error('log socket closed unexpectedly');
+    };
+
+{% block script %}
+{% endblock %}
+{% endblock %}
+</script>

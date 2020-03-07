@@ -1,0 +1,94 @@
+{% extends 'index.html' %}
+{% load static %}
+
+{% block content %}
+<div class = "container-fluid">
+	<h3>Account Report (<a href = "{% url 'manage:account_histories' %}">History</a>)</h3>
+	<table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Balance</th>
+                <th>Margin</th>
+                <th>Free Margin</th>
+                <th>Equity</th>
+                <th>Open Lots</th>
+                <th>Swap Profit</th>
+                <th>Profit</th>
+            </tr>
+        </thead>
+        <tbody id = "table_body">
+            {% for pair in pairs %}
+            <tr>
+                <td style = "display: flex; justify-content: space-between; align-items: center; background-color: darkgrey;">
+                    <a href = "{% url 'manage:rebalance_history' pair.id %}">
+                        <b style="font-size: medium;">{{pair.name}}</b>
+                    </a>
+                </td>
+                <td colspan="3">{{pair.first_account.balance|add:pair.second_account.balance}}</td>
+                <td colspan="2">{{pair.first_account.equity|add:pair.second_account.equity}}</td>
+                <td style="background-color: cadetblue;">{{pair.first_account.swap_profit|add:pair.second_account.swap_profit}}</td>
+                <td>{{pair.first_account.profit|add:pair.second_account.profit}}</td>
+            </tr>
+            <tr id = "{{pair.first_account.id}}">
+                <td style = "display: flex; justify-content: space-between; align-items: center;">
+                    <a href = "{% url 'manage:account_history' pair.first_account.id %}">
+                        {{pair.first_account.tag}}
+                    </a>
+                </td>
+                <td>{{pair.first_account.balance}}</td>
+                <td>{{pair.first_account.margin}}</td>
+                <td>{{pair.first_account.free_margin}}</td>
+                <td>{{pair.first_account.equity}}</td>
+                <td>{{pair.first_account.open_lots}}</td>
+                <td style="background-color: cadetblue;">{{pair.first_account.swap_profit}}</td>
+                <td>{{pair.first_account.profit}}</td>
+            </tr>
+            <tr id = "{{pair.second_account.id}}">
+                <td style = "display: flex; justify-content: space-between; align-items: center;">
+                    <a href = "{% url 'manage:account_history' pair.second_account.id %}">
+                        {{pair.second_account.tag}}
+                    </a>
+                </td>
+                <td>{{pair.second_account.balance}}</td>
+                <td>{{pair.second_account.margin}}</td>
+                <td>{{pair.second_account.free_margin}}</td>
+                <td>{{pair.second_account.equity}}</td>
+                <td>{{pair.second_account.open_lots}}</td>
+                <td style="background-color: cadetblue;">{{pair.second_account.swap_profit}}</td>
+                <td>{{pair.second_account.profit}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+
+<script>
+{% block script %}
+
+    var accountReportSocket = new WebSocket(
+        'ws://' + window.location.host +
+        '/ws/report/account/');
+
+    accountReportSocket.onmessage = function(e) {
+        var data = JSON.parse(e.data);
+        var message = data['message'];
+        var str_list = message.split(";");
+        var tr = $("#" + str_list[0])["0"];
+        if (tr) {
+            for (var i = 1; i <= 7; i++) {
+                tr.cells[i.toString()].innerHTML = str_list[i];
+            }
+        }
+    };
+
+    accountReportSocket.onopen=function (e) {
+        console.log("account reports connection success");
+    };
+
+    accountReportSocket.onclose = function(e) {
+        console.error('account reports socket closed unexpectedly');
+    };
+{% endblock %}
+</script>

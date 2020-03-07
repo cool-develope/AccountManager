@@ -1,0 +1,40 @@
+{% extends 'index.html' %}
+{% load static %}
+
+{% block content %}
+<div class = "container-fluid">
+	<h3>
+        {% if is_all %}
+            Account History (<a href = "{% url 'manage:account_list' %}">Report</a>)
+        {% else %}
+            {{account}} History (<a href = "{% url 'manage:account_histories' %}">All History</a>)
+        {% endif %}
+    </h3>
+	<table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Account</th>
+                <th>Process Date</th>
+                <th>Amount</th>
+                <th>Process Type</th>
+            </tr>
+        </thead>
+        <tbody id = "table_body">
+            {% for history in histories %}
+            <tr>
+                <td>{{history.account}}</td>
+                <td>{{history.open_date}}</td>
+                <td>{{history.amount}} {{history.account.currency}}</td>
+                <td>{{history.get_process_type_display}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+
+<script>
+{% block script %}
+    
+{% endblock %}
+</script>
