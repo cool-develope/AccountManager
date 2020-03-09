@@ -49,15 +49,15 @@ def callback(channel, method, properties, body):
     header, message = body.split('>>')
     if header == "AccountReport":
         account_report_analyse(client, message)
-    if header == "RebalanceReport":
+    if header == "Rebalance":
         rebalance_report_analyse(client, message)
 
-def rebalance_report_analyse(message):
+def rebalance_report_analyse(client, message):
     str_list = message.split(';')
     is_direct = True
-    first_account = manage_model.Account.objects.get(client, name = str_list[0])
-    second_account = manage_model.Account.objects.get(client, name = str_list[1])
-    amount = float(str_list[2])
+    first_account = manage_model.Account.objects.get(client, name = str_list[1])
+    second_account = manage_model.Account.objects.get(client, name = str_list[2])
+    amount = float(str_list[3])
 
     if manage_model.AccountPairs.objects.filter(first_account = first_account, second_account = second_account).exists():
         pair = manage_model.AccountPairs.objects.get(first_account = first_account, second_account = second_account)
