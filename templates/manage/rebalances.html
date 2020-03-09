@@ -22,7 +22,7 @@
             <tr id = "tr_{{reb.id}}">
                 <td>{{reb.id}}</td>
                 <td id = "td_{{reb.id}}", style = "background-color: {% if reb.state == 'PR' %} cadetblue {% else %} {% endif %};">
-                    {% if perms.Management.can_add_rebalance and reb.state == 'RQ' %}
+                    {% if perms.Management.add_rebalance and reb.state == 'RQ' %}
                         <button id = "change_state" class = "btn btn-info" data = "{{reb.id}}">Accept</button>
                     {% else %}
                     <b>Processing</b>
