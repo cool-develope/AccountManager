@@ -131,7 +131,7 @@ USE_L10N = True
 
 USE_TZ = True
 
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/manage/rebalance_list/'
 
 LOGIN_URL = "/auths/login"
 # Static files (CSS, JavaScript, Images)
