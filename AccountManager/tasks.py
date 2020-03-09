@@ -55,8 +55,8 @@ def callback(channel, method, properties, body):
 def rebalance_report_analyse(client, message):
     str_list = message.split(';')
     is_direct = True
-    first_account = manage_model.Account.objects.get(client, name = str_list[1])
-    second_account = manage_model.Account.objects.get(client, name = str_list[2])
+    first_account = manage_model.Account.objects.get(client = client, name = str_list[1])
+    second_account = manage_model.Account.objects.get(client = client, name = str_list[2])
     amount = float(str_list[3])
 
     if manage_model.AccountPairs.objects.filter(first_account = first_account, second_account = second_account).exists():
@@ -65,7 +65,7 @@ def rebalance_report_analyse(client, message):
         is_direct = False
         pair = manage_model.AccountPairs.objects.get(first_account = second_account, second_account = first_account)
 
-    manage_model.Rebalance.create(pair = pair, direct = is_direct, amount = amount, urgency = manage_model.Urgency.objects.get(name = "Regular"), period = "3 days", state = "WT")
+    manage_model.Rebalance.objects.create(pair = pair, direct = is_direct, amount = amount, urgency = manage_model.Urgency.objects.get(name = "Regular"), period = "3 days", state = "WT")
 
 def account_report_analyse(client, message):
     str_list = message.split(';')
