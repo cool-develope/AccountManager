@@ -68,7 +68,7 @@ def send_rebalance_report(message):
 
 def send_account_report(account):
     channel_layer = get_channel_layer()
-    message = "%d;%.5f;%.5f;%.5f;%.5f;%.2f;%.5f;%.5f" % (account.id, account.balance, account.margin, account.free_margin, account.equity, account.position_lots, account.profit, account.swap_profit)
+    message = "%d;%.5f;%.5f;%.5f;%.5f;%.2f;%.5f;%.5f" % (account.id, account.balance, account.margin, account.free_margin, account.equity, account.open_lots, account.profit, account.swap_profit)
  
     route = 'report_account'
     async_to_sync(channel_layer.group_send)(

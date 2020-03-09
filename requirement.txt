@@ -1,6 +1,0 @@
-Django==1.11.21
-pika
-django-background-tasks
-channels==2.3.1
-channels-redis
-service_identity

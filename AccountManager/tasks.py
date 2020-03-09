@@ -5,7 +5,8 @@ from . import consumers
 import pika
 
 @background(schedule=1)
-def bind_message(client):
+def bind_message(client_name):
+    client = manage_model.Client.objects.get(name = client_name)
     print("while binding", client.name)
     host = client.host
     prefix = client.name
@@ -23,11 +24,12 @@ def bind_message(client):
 
         channel = connection.channel()
         flag = True
-        ex_name = prefix + "_Account"
+        ex_name = prefix + "_Upload"
         channel.exchange_declare(exchange = ex_name, exchange_type="direct", durable = True)
-        channel.queue_declare(queue = ex_name)
-        channel.queue_bind(exchange = ex_name, routing_key = "route", queue = ex_name)
-        channel.basic_consume(queue = ex_name, on_message_callback = callback, auto_ack = True)
+        queue_name = prefix + "_Account"
+        channel.queue_declare(queue = queue_name)
+        channel.queue_bind(exchange = ex_name, routing_key = "route", queue = queue_name)
+        channel.basic_consume(queue = queue_name, on_message_callback = callback, auto_ack = True)
     
         channel.start_consuming()
     except Exception as e:
@@ -45,7 +47,6 @@ def callback(channel, method, properties, body):
     routing_key = method.routing_key
     body = body.decode('utf-8')
     header, message = body.split('>>')
-   
     if header == "AccountReport":
         account_report_analyse(client, message)
     if header == "RebalanceReport":
@@ -68,14 +69,16 @@ def rebalance_report_analyse(message):
 
 def account_report_analyse(client, message):
     str_list = message.split(';')
-    account = manage_model.Account.objects.get(client = client, name = str_list[0])
+    
     balance = float(str_list[1])
     margin = float(str_list[2])
     profit = float(str_list[3])
     swap_profit = float(str_list[4])
     open_lots = float(str_list[5])
     is_base = (str_list[6] == "True")
-
+    if not is_base:
+        return
+    account = manage_model.Account.objects.get(client = client, name = str_list[0])
     account.balance = balance
     account.margin = margin
     account.free_margin = balance + profit - margin + swap_profit

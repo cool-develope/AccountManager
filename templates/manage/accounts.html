@@ -13,8 +13,8 @@
                 <th>Free Margin</th>
                 <th>Equity</th>
                 <th>Open Lots</th>
-                <th>Swap Profit</th>
                 <th>Profit</th>
+                <th>Swap Profit</th>
             </tr>
         </thead>
         <tbody id = "table_body">
@@ -27,8 +27,8 @@
                 </td>
                 <td colspan="3">{{pair.first_account.balance|add:pair.second_account.balance}}</td>
                 <td colspan="2">{{pair.first_account.equity|add:pair.second_account.equity}}</td>
-                <td style="background-color: cadetblue;">{{pair.first_account.swap_profit|add:pair.second_account.swap_profit}}</td>
                 <td>{{pair.first_account.profit|add:pair.second_account.profit}}</td>
+                <td style="background-color: cadetblue;">{{pair.first_account.swap_profit|add:pair.second_account.swap_profit}}</td>
             </tr>
             <tr id = "{{pair.first_account.id}}">
                 <td style = "display: flex; justify-content: space-between; align-items: center;">
@@ -41,8 +41,8 @@
                 <td>{{pair.first_account.free_margin}}</td>
                 <td>{{pair.first_account.equity}}</td>
                 <td>{{pair.first_account.open_lots}}</td>
-                <td style="background-color: cadetblue;">{{pair.first_account.swap_profit}}</td>
                 <td>{{pair.first_account.profit}}</td>
+                <td>{{pair.first_account.swap_profit}}</td>
             </tr>
             <tr id = "{{pair.second_account.id}}">
                 <td style = "display: flex; justify-content: space-between; align-items: center;">
@@ -55,8 +55,8 @@
                 <td>{{pair.second_account.free_margin}}</td>
                 <td>{{pair.second_account.equity}}</td>
                 <td>{{pair.second_account.open_lots}}</td>
-                <td style="background-color: cadetblue;">{{pair.second_account.swap_profit}}</td>
                 <td>{{pair.second_account.profit}}</td>
+                <td>{{pair.second_account.swap_profit}}</td>
             </tr>
             {% endfor %}
         </tbody>
