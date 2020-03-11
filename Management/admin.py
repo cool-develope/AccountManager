@@ -5,7 +5,7 @@ from . import models
 class PairAdmin(admin.ModelAdmin):
     list_display = ('name', 'first_account','second_account')
     search_fields = ('first_account__tag', 'second_account__tag')
-    list_filter = ('first_account__tag', 'second_account__tag')
+    list_filter = ('first_account__tag', 'second_account__tag', 'client__trade_type')
 admin.site.register(models.AccountPairs, PairAdmin)
 
 class RebalanceAdmin(admin.ModelAdmin):
@@ -17,7 +17,7 @@ admin.site.register(models.Rebalance, RebalanceAdmin)
 class AccountAdmin(admin.ModelAdmin):
     list_display = ('name', 'tag', 'client', 'balance', 'free_margin', 'open_lots')
     search_fields = ('name', 'tag', 'client')
-    list_filter = ('client__name', 'currency')
+    list_filter = ('client__name', 'currency', 'client__trade_type')
 admin.site.register(models.Account, AccountAdmin)
 
 class HistoryAdmin(admin.ModelAdmin):
@@ -25,6 +25,12 @@ class HistoryAdmin(admin.ModelAdmin):
     search_fields = ('account__tag', 'process_type')
     list_filter = ('account__tag', 'process_type')
 admin.site.register(models.History, HistoryAdmin)
+
+class RecordAdmin(admin.ModelAdmin):
+    list_display = ('account', 'open_date', 'balance', 'equity', 'open_lots')
+    search_fields = ('account__tag', )
+    list_filter = ('account__tag', )
+admin.site.register(models.Record, RecordAdmin)
 
 admin.site.register(models.Client)
 admin.site.register(models.Urgency)

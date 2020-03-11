@@ -22,6 +22,14 @@ class Client(models.Model):
     comment = models.TextField(blank = True)
 
     host = models.CharField(max_length=100)
+    
+    TRADE_TYPE_CHOICES = [
+        ('FS', 'Forex Swap'),
+        ('FA', 'Forex Arb'),
+        ('GA', 'Gold Arb'),
+    ]
+
+    trade_type = models.CharField(max_length=10, choices=TRADE_TYPE_CHOICES)
 
     def __str__(self):
         return self.name
@@ -62,6 +70,8 @@ class History(models.Model):
 
 class AccountPairs(models.Model):
     name = models.CharField(max_length=100)
+    client = models.ForeignKey('Client', on_delete = models.CASCADE, related_name = 'pairs')
+
     first_account = models.ForeignKey('Account', on_delete=models.CASCADE, related_name="from_pair")
     second_account = models.ForeignKey('Account', on_delete=models.CASCADE, related_name="to_pair")
     
@@ -97,6 +107,16 @@ class Rebalance(models.Model):
     class Meta:
         ordering = ('-request_date', )
 
+class Record(models.Model):
+    account = models.ForeignKey('Account', on_delete=models.CASCADE, related_name="records")
+    open_date = models.DateTimeField(auto_now_add = False, blank = True, default = timezone.now)
+
+    balance = models.DecimalField(max_digits = 20, decimal_places = 2, blank = True, default = 0)
+    equity = models.DecimalField(max_digits = 20, decimal_places = 2, blank = True, default = 0)
+    open_lots = models.DecimalField(max_digits = 20, decimal_places = 2, blank = True, default = 0)
+
+    class Meta:
+        ordering = ('-open_date', )
 
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver

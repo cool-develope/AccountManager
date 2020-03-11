@@ -5,11 +5,15 @@
 <div class = "container-fluid">
 	<h3>
         {% if is_all %}
-            Account History (<a href = "{% url 'manage:account_list' %}">Report</a>)
+            {{trade_type}} Accounts History (<a href = "{% url 'manage:account_list' trade_type %}">Report</a>)
         {% else %}
-            {{account}} History (<a href = "{% url 'manage:account_histories' %}">All History</a>)
+            {{account}} History (<a href = "{% url 'manage:account_histories' account.client.trade_type %}">All History</a>)
+        {% endif %}
+        {% if perms.auth.manager %}
+            <a style="position: absolute; right: 300px; font-size: 18px; margin: 5px " href="/admin/Management/history/add/" target="_blank">Add History</a>
         {% endif %}
     </h3>
+
 	<table class="table table-bordered">
         <thead>
             <tr>

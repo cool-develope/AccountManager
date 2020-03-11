@@ -3,6 +3,7 @@ from Management import models as manage_model
 from background_task.models import Task
 from . import consumers
 import pika
+from django.utils import timezone
 
 @background(schedule=1)
 def bind_message(client_name):
@@ -76,13 +77,19 @@ def account_report_analyse(client, message):
     swap_profit = float(str_list[4])
     open_lots = float(str_list[5])
     is_base = (str_list[6] == "True")
+    equity = balance + profit + swap_profit
+    
+    if str_list[7] == 'daily':
+        account = manage_model.Account.objects.get(client = client, name = str_list[0])
+        manage_model.Record.objects.create(account = account, open_date = timezone.now(), balance = balance, equity = equity, open_lots = open_lots)
+        return 
     if not is_base:
         return
     account = manage_model.Account.objects.get(client = client, name = str_list[0])
     account.balance = balance
     account.margin = margin
-    account.free_margin = balance + profit - margin + swap_profit
-    account.equity = balance + profit + swap_profit
+    account.free_margin = equity - margin
+    account.equity = equity
     account.profit = profit
     account.swap_profit = swap_profit
     account.open_lots = open_lots

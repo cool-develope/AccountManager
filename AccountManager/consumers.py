@@ -4,6 +4,7 @@ from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from channels.routing import ProtocolTypeRouter, URLRouter
 from django.conf.urls import url
+from Management.templatetags.currency_display import display_as_currency
 
 class AccountConsumer(WebsocketConsumer):
     def connect(self):
@@ -68,7 +69,9 @@ def send_rebalance_report(message):
 
 def send_account_report(account):
     channel_layer = get_channel_layer()
-    message = "%d;%.5f;%.5f;%.5f;%.5f;%.2f;%.5f;%.5f" % (account.id, account.balance, account.margin, account.free_margin, account.equity, account.open_lots, account.profit, account.swap_profit)
+    message = "%d;%s;%s;%s;%s;%.2f;%s;%s" % (account.id, display_as_currency(account.balance), display_as_currency(account.margin), 
+                display_as_currency(account.free_margin), display_as_currency(account.equity), account.open_lots, display_as_currency(account.profit), 
+                display_as_currency(account.swap_profit))
  
     route = 'report_account'
     async_to_sync(channel_layer.group_send)(

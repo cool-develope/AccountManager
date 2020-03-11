@@ -20,7 +20,9 @@ class AccountListView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(TemplateView, self).get_context_data()
-        context['pairs'] = manage_model.AccountPairs.objects.all()
+        context['pairs'] = manage_model.AccountPairs.objects.filter(client__trade_type = kwargs['trade_type'])
+        context['trade_type'] = kwargs['trade_type']
+
         return context
 
 class AccountHistoryView(TemplateView):
@@ -34,10 +36,20 @@ class AccountHistoryView(TemplateView):
             context['is_all'] = False
             context['account'] = account
         else:
-            context['histories'] = manage_model.History.objects.all()[:10]
+            context['histories'] = manage_model.History.objects.filter(account__client__trade_type = kwargs['trade_type'])[:10]
+            context['trade_type'] = kwargs['trade_type']
             context['is_all'] = True
         return context
 
+class RecordHistoryView(TemplateView):
+    template_name = "manage/account_record.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(TemplateView, self).get_context_data()
+        account = manage_model.Account.objects.get(id = kwargs['account_id'])
+        context['records'] = account.records.all()[:25]
+        context['account'] = account
+        return context
 
 class RebalanceListView(TemplateView):
     template_name = "manage/rebalances.html"

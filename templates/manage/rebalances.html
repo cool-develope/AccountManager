@@ -3,7 +3,12 @@
 
 {% block content %}
 <div class = "container-fluid">
-	<h3>Waiting Rebalance (<a href = "{% url 'manage:rebalance_histories' %}">History</a>)</h3>
+	<h3>
+        Waiting Rebalance (<a href = "{% url 'manage:rebalance_histories' %}">History</a>)
+        {% if perms.auth.manager %}
+            <a style="position: absolute; right: 300px; font-size: 18px; margin: 5px " href="/admin/Management/rebalance/" target="_blank">Add Rebalance</a>
+        {% endif %}
+    </h3>
 	<table class="table table-bordered">
         <thead>
             <tr>
@@ -22,7 +27,7 @@
             <tr id = "tr_{{reb.id}}">
                 <td>{{reb.id}}</td>
                 <td id = "td_{{reb.id}}", style = "background-color: {% if reb.state == 'PR' %} cadetblue {% else %} {% endif %};">
-                    {% if perms.Management.add_rebalance and reb.state == 'RQ' %}
+                    {% if perms.auth.client and reb.state == 'RQ' %}
                         <button id = "change_state" class = "btn btn-info" data = "{{reb.id}}">Accept</button>
                     {% else %}
                     <b>Processing</b>
@@ -50,7 +55,7 @@
 
 <script>
 {% block script %}
-    $("#change_state").on("click", function() {
+    $(document).on("click", "#change_state", function() {
         var reb_id = $(this).attr("data");
         var td = $("#td_" + reb_id);
         td.css("background-color", "dodgerblue");
@@ -76,13 +81,17 @@
             var tr = $("<tr></tr>").attr("id", "tr_" + str_list[1]);
             var td = $("<td></td>").text(str_list[1]);
             tr.append(td);
-            var button = $("<button></button>").attr({
-                "id" : "change_state",
-                "class" : "btn btn-info",
-                "data" : str_list[1],
-            }).text("Accept");
             td = $("<td></td>").attr("id", "td_" + str_list[1]);
-            td.append(button);
+            {% if perms.auth.client %}
+                var button = $("<button></button>").attr({
+                    "id" : "change_state",
+                    "class" : "btn btn-info",
+                    "data" : str_list[1],
+                }).text("Accept");
+                td.append(button);
+            {% else %}
+                td.text("processing")
+            {% endif %}
             tr.append(td);
             for (var i = 2; i <= 7; i++) {
                 tr.append($("<td></td>").text(str_list[i]));

@@ -9,14 +9,23 @@
 <body style="font-family: Malgun Gothic;">
 <div class="container" style="font-family: PRK P Chongbong; font-size: 20px;">
   <ul class="nav nav-tabs col-md-offset-2">
-    <li class="tablinks" id = 'clients'><a href="{% url 'manage:account_list' %}">Account</a></li>
+    <li class = "tablinks dropdown" id = 'account'>
+      <a class="dropdown-toggle" data-toggle="dropdown" href="#">Account<span class="caret"></span></a>
+      <ul class="dropdown-menu">
+        {% if perms.auth.client %}
+        <li class = "" id = '{{forex_swap}}'><a href="{% url 'manage:account_list' 'FS' %}">Forex Swap</a></li>
+        {% endif %}
+        <li class = "" id = '{{forex_arb}}'><a href="{% url 'manage:account_list' 'FA' %}">Forex Arb</a></li>
+        <li class = "" id = '{{gold_arb}}'><a href="{% url 'manage:account_list' 'GA' %}">Gold Arb</a></li>
+      </ul>
+    </li>
     <li class="tablinks" id = 'clients'><a href="{% url 'manage:rebalance_list' %}">Rebalance</a></li>
     <a style="position: absolute;
     right: 10px; padding:12px; font-size: 18px; margin: 5px " href="{% url 'auths:logout' %}">Logout</a>
   </ul>
 </div>
 <div>
-  <div class = "col-md-3"><div class = "log-panel" id = "log_panel" style="height:880px;"></div></div>
+  <div class = "col-md-3"><div class = "log-panel" id = "log_panel" style="height:820px;"></div></div>
   <div id = "main-container" class = "col-md-9">
     {% block content %}
     {% endblock %}

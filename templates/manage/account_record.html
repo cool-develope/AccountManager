@@ -1,0 +1,37 @@
+{% extends 'index.html' %}
+{% load static %}
+{% load currency_display %}
+
+{% block content %}
+<div class = "container-fluid">
+	<h3>      
+    {{account}} Daily Record (<a href = "{% url 'manage:account_history' account.id %}">History</a>) 
+  </h3>
+	<table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Record Date</th>
+                <th>Balance ({{account.currency}})</th>
+                <th>Equity ({{account.currency}})</th>
+                <th>Open Lots</th>
+            </tr>
+        </thead>
+        <tbody id = "table_body">
+            {% for record in records %}
+            <tr>
+                <td>{{record.open_date}}</td>
+                <td>{{record.balance|currency}}</td>
+                <td>{{record.equity}} </td>
+                <td>{{record.open_lots}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+
+<script>
+{% block script %}
+    
+{% endblock %}
+</script>

@@ -1,9 +1,10 @@
 {% extends 'index.html' %}
 {% load static %}
+{% load currency_display %}
 
 {% block content %}
 <div class = "container-fluid">
-	<h3>Account Report (<a href = "{% url 'manage:account_histories' %}">History</a>)</h3>
+	<h3> {{trade_type}} Accounts Report (<a href = "{% url 'manage:account_histories' trade_type %}">History</a>)</h3>
 	<table class="table table-bordered">
         <thead>
             <tr>
@@ -25,38 +26,38 @@
                         <b style="font-size: medium;">{{pair.name}}</b>
                     </a>
                 </td>
-                <td colspan="3">{{pair.first_account.balance|add:pair.second_account.balance}}</td>
-                <td colspan="2">{{pair.first_account.equity|add:pair.second_account.equity}}</td>
-                <td>{{pair.first_account.profit|add:pair.second_account.profit}}</td>
-                <td style="background-color: cadetblue;">{{pair.first_account.swap_profit|add:pair.second_account.swap_profit}}</td>
+                <td colspan="3">{{pair.first_account.balance|add:pair.second_account.balance|currency}}</td>
+                <td colspan="2">{{pair.first_account.equity|add:pair.second_account.equity|currency}}</td>
+                <td>{{pair.first_account.profit|add:pair.second_account.profit|currency}}</td>
+                <td style="background-color: cadetblue;">{{pair.first_account.swap_profit|add:pair.second_account.swap_profit|currency}}</td>
             </tr>
             <tr id = "{{pair.first_account.id}}">
                 <td style = "display: flex; justify-content: space-between; align-items: center;">
-                    <a href = "{% url 'manage:account_history' pair.first_account.id %}">
+                    <a href = "{% url 'manage:record_history' pair.first_account.id %}">
                         {{pair.first_account.tag}}
                     </a>
                 </td>
-                <td>{{pair.first_account.balance}}</td>
-                <td>{{pair.first_account.margin}}</td>
-                <td>{{pair.first_account.free_margin}}</td>
-                <td>{{pair.first_account.equity}}</td>
+                <td>{{pair.first_account.balance|currency}}</td>
+                <td>{{pair.first_account.margin|currency}}</td>
+                <td>{{pair.first_account.free_margin|currency}}</td>
+                <td>{{pair.first_account.equity|currency}}</td>
                 <td>{{pair.first_account.open_lots}}</td>
-                <td>{{pair.first_account.profit}}</td>
-                <td>{{pair.first_account.swap_profit}}</td>
+                <td>{{pair.first_account.profit|currency}}</td>
+                <td>{{pair.first_account.swap_profit|currency}}</td>
             </tr>
             <tr id = "{{pair.second_account.id}}">
                 <td style = "display: flex; justify-content: space-between; align-items: center;">
-                    <a href = "{% url 'manage:account_history' pair.second_account.id %}">
+                    <a href = "{% url 'manage:record_history' pair.second_account.id %}">
                         {{pair.second_account.tag}}
                     </a>
                 </td>
-                <td>{{pair.second_account.balance}}</td>
-                <td>{{pair.second_account.margin}}</td>
-                <td>{{pair.second_account.free_margin}}</td>
-                <td>{{pair.second_account.equity}}</td>
+                <td>{{pair.second_account.balance|currency}}</td>
+                <td>{{pair.second_account.margin|currency}}</td>
+                <td>{{pair.second_account.free_margin|currency}}</td>
+                <td>{{pair.second_account.equity|currency}}</td>
                 <td>{{pair.second_account.open_lots}}</td>
-                <td>{{pair.second_account.profit}}</td>
-                <td>{{pair.second_account.swap_profit}}</td>
+                <td>{{pair.second_account.profit|currency}}</td>
+                <td>{{pair.second_account.swap_profit|currency}}</td>
             </tr>
             {% endfor %}
         </tbody>
