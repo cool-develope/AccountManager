@@ -34,7 +34,7 @@
             <tr id = "{{pair.first_account.id}}">
                 <td style = "display: flex; justify-content: space-between; align-items: center;">
                     <a href = "{% url 'manage:record_history' pair.first_account.id %}">
-                        {{pair.first_account.tag}}
+                        {{pair.first_account.tag}} ({{pair.first_account.currency}})
                     </a>
                 </td>
                 <td>{{pair.first_account.balance|currency}}</td>
@@ -48,7 +48,7 @@
             <tr id = "{{pair.second_account.id}}">
                 <td style = "display: flex; justify-content: space-between; align-items: center;">
                     <a href = "{% url 'manage:record_history' pair.second_account.id %}">
-                        {{pair.second_account.tag}}
+                        {{pair.second_account.tag}} ({{pair.second_account.currency}})
                     </a>
                 </td>
                 <td>{{pair.second_account.balance|currency}}</td>

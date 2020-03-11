@@ -51,6 +51,8 @@ CHANNEL_LAYERS = {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
             "hosts": [("redis://:guest@127.0.0.1:6379/0")],
+            "capacity": 1500,
+            "expiry": 10,
         },
     },
 }
@@ -143,7 +145,7 @@ USE_TZ = True
 
 LOGIN_REDIRECT_URL = '/manage/rebalance_list/'
 
-LOGIN_URL = "/auths/login"
+LOGIN_URL = "/auths/login/"
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
@@ -151,7 +153,7 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, "static"),
+    os.path.join(BASE_DIR, "staticfiles"),
 )
 
 MEDIA_URL = '/media/'

@@ -75,7 +75,7 @@ class RebalanceHistoryView(TemplateView):
         context  = super(TemplateView, self).get_context_data()
         if 'pair_id' in kwargs:
             pair = manage_model.AccountPairs.objects.get(id = kwargs['pair_id'])
-            context['rebalances'] = pair.rebalances.filter(state = 'FS')[:10]
+            context['rebalances'] = pair.rebalances.filter(state = 'FS').all()[:10]
             context['is_all'] = False
             context['pair'] = pair
         else:

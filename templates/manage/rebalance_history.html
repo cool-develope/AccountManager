@@ -1,5 +1,6 @@
 {% extends 'index.html' %}
 {% load static %}
+{% load currency_display %}
 
 {% block content %}
 <div class = "container-fluid">
@@ -37,7 +38,7 @@
                 <td>{% if reb.direct %} {{reb.pair.second_account}} {% else %} {{reb.pair.first_account}} {% endif %}</td>
                 <td>{{reb.request_date}}</td>
                 <td>{{reb.finish_date}}</td>
-                <td>{{reb.amount}} {{reb.pair.first_account.currency}}</td>
+                <td>{{reb.amount|currency}} {{reb.pair.first_account.currency}}</td>
                 <td>{{reb.urgency}}</td>
                 <td>{{reb.period}}</td>
             </tr>

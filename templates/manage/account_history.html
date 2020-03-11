@@ -1,5 +1,6 @@
 {% extends 'index.html' %}
 {% load static %}
+{% load currency_display %}
 
 {% block content %}
 <div class = "container-fluid">
@@ -28,7 +29,7 @@
             <tr>
                 <td>{{history.account}}</td>
                 <td>{{history.open_date}}</td>
-                <td>{{history.amount}} {{history.account.currency}}</td>
+                <td>{{history.amount|currency}} {{history.account.currency}}</td>
                 <td>{{history.get_process_type_display}}</td>
             </tr>
             {% endfor %}

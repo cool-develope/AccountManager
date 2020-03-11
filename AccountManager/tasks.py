@@ -4,6 +4,7 @@ from background_task.models import Task
 from . import consumers
 import pika
 from django.utils import timezone
+from django.core.exceptions import ObjectDoesNotExist
 
 @background(schedule=1)
 def bind_message(client_name):
@@ -56,16 +57,20 @@ def callback(channel, method, properties, body):
 def rebalance_report_analyse(client, message):
     str_list = message.split(';')
     is_direct = True
-    first_account = manage_model.Account.objects.get(client = client, name = str_list[1])
-    second_account = manage_model.Account.objects.get(client = client, name = str_list[2])
-    amount = float(str_list[3])
+    try:
+        first_account = manage_model.Account.objects.get(client = client, name = str_list[1])
+        second_account = manage_model.Account.objects.get(client = client, name = str_list[2])
+    
+        amount = float(str_list[3])
 
-    if manage_model.AccountPairs.objects.filter(first_account = first_account, second_account = second_account).exists():
-        pair = manage_model.AccountPairs.objects.get(first_account = first_account, second_account = second_account)
-    else:
-        is_direct = False
-        pair = manage_model.AccountPairs.objects.get(first_account = second_account, second_account = first_account)
+        if manage_model.AccountPairs.objects.filter(first_account = first_account, second_account = second_account).exists():
+            pair = manage_model.AccountPairs.objects.get(first_account = first_account, second_account = second_account)
+        else:
+            is_direct = False
+            pair = manage_model.AccountPairs.objects.get(first_account = second_account, second_account = first_account)
 
+    except ObjectDoesNotExist:
+        return
     manage_model.Rebalance.objects.create(pair = pair, direct = is_direct, amount = amount, urgency = manage_model.Urgency.objects.get(name = "Regular"), period = "3 days", state = "WT")
 
 def account_report_analyse(client, message):
@@ -80,12 +85,20 @@ def account_report_analyse(client, message):
     equity = balance + profit + swap_profit
     
     if str_list[7] == 'daily':
-        account = manage_model.Account.objects.get(client = client, name = str_list[0])
+        try:
+            account = manage_model.Account.objects.get(client = client, name = str_list[0])
+        except ObjectDoesNotExist:
+            return
         manage_model.Record.objects.create(account = account, open_date = timezone.now(), balance = balance, equity = equity, open_lots = open_lots)
         return 
     if not is_base:
         return
-    account = manage_model.Account.objects.get(client = client, name = str_list[0])
+
+    try:
+        account = manage_model.Account.objects.get(client = client, name = str_list[0])
+    except ObjectDoesNotExist:
+        return
+
     account.balance = balance
     account.margin = margin
     account.free_margin = equity - margin
