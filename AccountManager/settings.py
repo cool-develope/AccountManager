@@ -25,7 +25,7 @@ SECRET_KEY = 'k=nc2j9u0g4ryqtldyz4iwuom8cxlg4(lhq$p)4jz6y=i(6-h$'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '192.168.0.111']
+ALLOWED_HOSTS = ['localhost', '192.168.0.111', '78.141.194.252']
 
 AUTH_USER_MODEL = 'Auths.MyUser'
 
@@ -99,7 +99,7 @@ WSGI_APPLICATION = 'AccountManager.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'SwapServer',                      
+        'NAME': 'AccountManager',                      
         'USER': 'postgres',
         'PASSWORD': 'root',
         'HOST': 'localhost',
