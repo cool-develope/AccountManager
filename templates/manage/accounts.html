@@ -20,6 +20,7 @@
         </thead>
         <tbody id = "table_body">
             {% for pair in pairs %}
+            {% if perms.auth.client %}
             <tr>
                 <td style = "display: flex; justify-content: space-between; align-items: center; background-color: darkgrey;">
                     <a href = "{% url 'manage:rebalance_history' pair.id %}">
@@ -31,6 +32,8 @@
                 <td>{{pair.first_account.profit|add:pair.second_account.profit|currency}}</td>
                 <td style="background-color: cadetblue;">{{pair.first_account.swap_profit|add:pair.second_account.swap_profit|currency}}</td>
             </tr>
+            {% endif %}
+            {% if perms.auth.client or user == pair.first_account.user %}
             <tr id = "{{pair.first_account.id}}">
                 <td style = "display: flex; justify-content: space-between; align-items: center;">
                     <a href = "{% url 'manage:record_history' pair.first_account.id %}">
@@ -45,6 +48,8 @@
                 <td>{{pair.first_account.profit|currency}}</td>
                 <td>{{pair.first_account.swap_profit|currency}}</td>
             </tr>
+            {% endif %}
+            {% if perms.auth.client or user == pair.second_account.user %}
             <tr id = "{{pair.second_account.id}}">
                 <td style = "display: flex; justify-content: space-between; align-items: center;">
                     <a href = "{% url 'manage:record_history' pair.second_account.id %}">
@@ -59,6 +64,7 @@
                 <td>{{pair.second_account.profit|currency}}</td>
                 <td>{{pair.second_account.swap_profit|currency}}</td>
             </tr>
+            {% endif %}
             {% endfor %}
         </tbody>
     </table>

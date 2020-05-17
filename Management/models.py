@@ -35,6 +35,7 @@ class Client(models.Model):
         return self.name
 
 class Account(models.Model):
+    user = models.ForeignKey("Auths.MyUser", on_delete=models.CASCADE, related_name="accounts")
     name = models.CharField(max_length=100)
     tag = models.CharField(max_length=100)
     currency = models.ForeignKey('Currency', on_delete=models.CASCADE, related_name="accounts")
